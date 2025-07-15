@@ -1,15 +1,20 @@
 [
-    {
-      "id": 1,
-      "task": "Update Contact Email",
-      "select": "SELECT * FROM clientaccuser WHERE clientid = 123",
-      "update": "UPDATE clientaccuser SET Email = 'abc@a.com' WHERE clientaccuserId = 456 AND clientid = 123"
-    },
-    {
-      "id": 2,
-      "task": "Reset User Password",
-      "select": "SELECT * FROM clientaccuser WHERE Username = 'john.doe'",
-      "update": "UPDATE clientaccuser SET Password = 'hashed123' WHERE clientaccuserId = 789"
-    }
-  ]
-  
+  {
+    "id": 1,
+    "task": "Update Contact Email",
+    "select": "SELECT * FROM clientaccuser WHERE clientid = 123",
+    "update": "UPDATE clientaccuser SET Email = 'abc@a.com' WHERE clientaccuserId = 456 AND clientid = 123"
+  },
+  {
+    "id": 2,
+    "task": "Reset User Password",
+    "select": "SELECT * FROM clientaccuser WHERE Username = 'john.doe'",
+    "update": "UPDATE clientaccuser SET Password = 'hashed123' WHERE clientaccuserId = 789"
+  },
+  {
+    "id": 3,
+    "task": "Update Client First Name",
+    "select": "SELECT * FROM client WHERE clientid = 321",
+    "update": "UPDATE client SET FirstName = 'Krunal' WHERE clientid = 321"
+  }
+]
