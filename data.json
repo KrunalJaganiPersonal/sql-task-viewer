@@ -1,0 +1,15 @@
+[
+    {
+      "id": 1,
+      "task": "Update Contact Email",
+      "select": "SELECT * FROM clientaccuser WHERE clientid = 123",
+      "update": "UPDATE clientaccuser SET Email = 'abc@a.com' WHERE clientaccuserId = 456 AND clientid = 123"
+    },
+    {
+      "id": 2,
+      "task": "Reset User Password",
+      "select": "SELECT * FROM clientaccuser WHERE Username = 'john.doe'",
+      "update": "UPDATE clientaccuser SET Password = 'hashed123' WHERE clientaccuserId = 789"
+    }
+  ]
+  

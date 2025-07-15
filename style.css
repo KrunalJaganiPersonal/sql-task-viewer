@@ -1,0 +1,76 @@
+/* Animated gradient background */
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #a18cd1, #fbc2eb);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Gradient animation keyframes */
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+h2 {
+  font-weight: 600;
+  color: #343a40;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.copyable:hover {
+  background-color: #f1f1f1;
+  transition: background-color 0.2s ease;
+}
+
+.modal-content {
+  border-radius: 0.5rem;
+}
+
+.toast {
+  z-index: 1056;
+}
+
+/* Add button alignment */
+#addButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+/* Hide main content before login */
+#mainContent.d-none,
+#logoutContainer.d-none {
+  display: none !important;
+}
+
+/* Logout button styling */
+#logoutBtn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+/* Centered login modal adjustments */
+#loginModal .modal-dialog {
+  margin: 10vh auto; 
+}
+
+/* Logout confirmation modal centering */
+#logoutModal .modal-dialog {
+   margin: 10vh auto; 
+}
