@@ -1,20 +1,122 @@
 [
   {
     "id": 1,
-    "task": "Update Contact Email",
-    "select": "SELECT * FROM clientaccuser WHERE clientid = 123",
-    "update": "UPDATE clientaccuser SET Email = 'abc@a.com' WHERE clientaccuserId = 456 AND clientid = 123"
+    "task": "Update Main Contact",
+    "select": [
+      "DECLARE @ClientId BIGINT = 241638",
+      "SELECT * FROM Client WHERE ClientId = @ClientId",
+      "SELECT * FROM ClientAccUser WHERE ClientId = @ClientId",
+      "SELECT * FROM UserMaster WHERE ClientId = @ClientId",
+      "SELECT * FROM Clientaboutus WHERE ClientId = @ClientId",
+      "SELECT * FROM ClientDirector WHERE ClientId = @ClientId",
+      "SELECT * FROM ClientOwnership WHERE ClientId = @ClientId"
+    ],
+    "update": [
+      "UPDATE Client SET ContactFirstName = 'Vladimir', ContactMiddleName = NULL, ContactLastName = 'Arteyev' WHERE ClientId = @ClientId",
+      "UPDATE Clientaboutus SET FirstName = 'Vladimir', MiddleName = NULL, LastName = 'Arteyev' WHERE ClientId = @ClientId",
+      "UPDATE ClientDirector SET FirstName = 'Vladimir', MiddleName = NULL, LastName = 'Arteyev' WHERE ClientId = @ClientId",
+      "UPDATE ClientOwnership SET FirstName = 'Vladimir', MiddleName = NULL, LastName = 'Arteyev' WHERE ClientId = @ClientId",
+      "UPDATE ClientAccUser SET FirstName = 'Vladimir', MiddleName = NULL, LastName = 'Arteyev' WHERE ClientId = @ClientId",
+      "UPDATE UserMaster SET FirstName = 'Vladimir', MiddleName = NULL, LastNmae = 'Arteyev' WHERE ClientId = @ClientId AND UserId = 273394"
+    ]
   },
   {
     "id": 2,
-    "task": "Reset User Password",
-    "select": "SELECT * FROM clientaccuser WHERE Username = 'john.doe'",
-    "update": "UPDATE clientaccuser SET Password = 'hashed123' WHERE clientaccuserId = 789"
+    "task": "depo, VM, MC Change",
+    "select": [
+      "DECLARE @ConversionCode VARCHAR(50) = 'FW300322-QZMOZ'",
+      "SELECT Deposit_amount, Deposit_currency, Deposit_percentage, VariationMargin, MarginCall, Deposit_status, * FROM Conversion WHERE ConversionCode = @ConversionCode",
+      "SELECT * FROM TransactionHistory WHERE TransactionId = 28670"
+    ],
+    "update": [
+      "UPDATE Conversion SET Deposit_percentage = 0, VariationMargin = 3, MarginCall = 3, Deposit_status = 'deposit_received' WHERE Conversion_id = 28670",
+      "UPDATE TransactionHistory SET Amount = 0, PendingAmount = 0 WHERE TransactionId = 28670 AND TransactionHistoryId = 366121",
+      "UPDATE TransactionHistory SET Amount = 2000.00 WHERE TransactionId = 28670 AND TransactionHistoryId = 366120"
+    ]
   },
   {
     "id": 3,
-    "task": "Update Client First Name",
-    "select": "SELECT * FROM client WHERE clientid = 321",
-    "update": "UPDATE client SET FirstName = 'Krunal' WHERE clientid = 321"
+    "task": "Update provider ref number on FW280425-VTWZV-C to 664840471",
+    "select": [
+      "DECLARE @ConversionCode VARCHAR(50) = 'FW300322-QZMOZ-A'",
+      "SELECT * FROM Conversion WHERE ConversionCode = @ConversionCode"
+    ],
+    "update": [
+      "UPDATE Conversion SET IFX_Trade_ReferenceNo = '664840471' WHERE Conversion_id = 28670"
+    ]
+  },
+  {
+    "id": 4,
+    "task": "Please set up payment of 1,00,000.00 PHP to 'Krunal PHP'",
+    "select": [
+      "DECLARE @ClientId BIGINT = 210758, @AccountNo VARCHAR(50) = 'CA251124-QCC', @Currency VARCHAR(10) = 'PHP', @BeneficiaryName VARCHAR(50) = 'Krunal PHP'",
+      "SELECT * FROM CurrencyMaster WHERE CurrencyCode LIKE '%PHP%'",
+      "SELECT * FROM Client WHERE AccountNo = @AccountNo",
+      "SELECT * FROM ClientAccUser WHERE ClientId = @ClientId",
+      "SELECT * FROM BeneficiaryMaster WHERE ClientId = @ClientId AND BeneficiaryRefName LIKE '%Krunal PHP%'",
+      "SELECT * FROM Balances WHERE ClientId = @ClientId AND Currency = 'PHP'",
+      "SELECT TOP 10 * FROM Payment ORDER BY PaymentId DESC"
+    ],
+    "update": ["EXEC USP_Payment_DatabaseManualEntry 140969, 100000.00, 106, '2025-07-15 00:00:00.000', 'Go-To Outsourcing INC', 'Go-To Outsourcing INC', 'pending', 210758, 132889, NULL"]
+  },
+  {
+    "id": 5,
+    "task": "Please update FW250924-WZOZQ-D ref number to 664846770 and new VD 29/07/2025",
+    "select": [
+      "DECLARE @ConversionCode VARCHAR(50) = 'FW140725-QVVZZ-A'",
+      "SELECT ParentConversionId, MainParentId, Id, * FROM Conversion WHERE ConversionCode = @ConversionCode",
+      "SELECT ParentConversionId, MainParentId, Id, * FROM Conversion WHERE ConversionCode = 'FW140725-QVVZZ'"
+    ],
+    "update": [
+      "UPDATE Conversion SET ParentConversionId = 4435435, Settlement_date = '2025-07-29 00:00:00.000' WHERE Conversion_id = 28669"
+    ]
+  },
+  {
+    "id": 6,
+    "task": "Please update Main Forward FW250924-WZOZQ ref number to 664846770",
+    "select": [
+      "DECLARE @ConversionCode VARCHAR(50) = 'FW140725-QVVZZ'",
+      "SELECT ParentConversionId, MainParentId, Id, * FROM Conversion WHERE ConversionCode = @ConversionCode",
+      "SELECT ParentConversionId, MainParentId, Id, * FROM Conversion WHERE ConversionCode = 'FW140725-QVVZZ'"
+    ],
+    "update": [
+      "UPDATE Conversion SET Id = '4435435', MainParentId = '4435435', ParentConversionId = '4435435' WHERE Conversion_id = 28669"
+    ]
+  },
+  {
+    "id": 7,
+    "task": "Get which SP is inserting or updating data in any field (e.g. SpreadPerc)",
+    "select": [
+      "SELECT OBJECT_NAME(object_id) AS ObjectName, definition FROM sys.sql_modules WHERE definition LIKE '%SpreadPerc%' AND (definition LIKE '%INSERT%' OR definition LIKE '%UPDATE%')"
+    ],
+    "update": []
+  },
+  {
+    "id": 8,
+    "task": "PR150725-OZURW - Check why this payment has failed",
+    "select": [
+      "DECLARE @PaymentCode VARCHAR(50) = 'PR150725-OZURW', @PaymentId BIGINT = 0",
+      "SELECT @PaymentId = PaymentId, * FROM Payment WHERE PaymentCode = @PaymentCode",
+      "SELECT Reason, CreatedDate FROM PaymentFailure WHERE PaymentId = @PaymentId"
+    ],
+    "update": []
+  },
+  {
+    "id": 9,
+    "task": "SP150725-PZPNS - Spread on this deal looks wrong (using inverse)",
+    "select": [
+      "DECLARE @ConversionCode VARCHAR(50) = 'SP150725-PZPNS'",
+      "--LP rate and client rate should be nearby",
+      "SELECT * FROM Conversion WHERE ConversionCode = @ConversionCode"
+    ],
+    "update": []
+  },
+  {
+    "id": 10,
+    "task": "Get PurposeCodes not found in PaymentPurposeCode",
+    "select": [
+      "SELECT DISTINCT PM.PurposeCode FROM Payment PM LEFT JOIN PaymentPurposeCode PPC ON PPC.Name = PM.PurposeCode WHERE PM.PurposeCode IS NOT NULL AND PPC.Name IS NULL"
+    ],
+    "update": []
   }
 ]
