@@ -74,3 +74,18 @@ h2 {
 #logoutModal .modal-dialog {
    margin: 10vh auto; 
 }
+
+/* Overlay on main content for better readability */
+.bg-light-overlay {
+  background-color: rgba(255, 255, 255, 0.94);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+
+.copyright-note {
+  font-size: 0.98rem;
+  color: #555;
+  font-style: italic;
+}
+

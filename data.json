@@ -29,14 +29,12 @@
       "SELECT * FROM TransactionHistory WHERE TransactionId = 28670"
     ],
     "update": [
-      "UPDATE Conversion SET Deposit_percentage = 0, VariationMargin = 3, MarginCall = 3, Deposit_status = 'deposit_received' WHERE Conversion_id = 28670",
-      "UPDATE TransactionHistory SET Amount = 0, PendingAmount = 0 WHERE TransactionId = 28670 AND TransactionHistoryId = 366121",
-      "UPDATE TransactionHistory SET Amount = 2000.00 WHERE TransactionId = 28670 AND TransactionHistoryId = 366120"
+      "EXEC [dbo].[USP_Conversion_UpdateConversionDepoVcMc] @ConversionCode = 'FW170725-ZOPZZ', @DepositPercentage = 0,  @VariationMargin = 3,  @MarginCall = 3;"
     ]
   },
   {
     "id": 3,
-    "task": "Update provider ref number on FW280425-VTWZV-C to 664840471",
+    "task": "If Conversion Status is  then Update provider ref number on FW280425-VTWZV-C to 664840471",
     "select": [
       "DECLARE @ConversionCode VARCHAR(50) = 'FW300322-QZMOZ-A'",
       "SELECT * FROM Conversion WHERE ConversionCode = @ConversionCode"
@@ -64,8 +62,8 @@
     "task": "Please update FW250924-WZOZQ-D ref number to 664846770 and new VD 29/07/2025",
     "select": [
       "DECLARE @ConversionCode VARCHAR(50) = 'FW140725-QVVZZ-A'",
-      "SELECT ParentConversionId, MainParentId, Id, * FROM Conversion WHERE ConversionCode = @ConversionCode",
-      "SELECT ParentConversionId, MainParentId, Id, * FROM Conversion WHERE ConversionCode = 'FW140725-QVVZZ'"
+      "SELECT ParentConversionId, MainParentId, Id,Status, * FROM Conversion WHERE ConversionCode = @ConversionCode",
+      "SELECT ParentConversionId, MainParentId, Id,Status, * FROM Conversion WHERE ConversionCode = 'FW140725-QVVZZ'"
     ],
     "update": [
       "UPDATE Conversion SET ParentConversionId = 4435435, Settlement_date = '2025-07-29 00:00:00.000' WHERE Conversion_id = 28669"
@@ -75,9 +73,8 @@
     "id": 6,
     "task": "Please update Main Forward FW250924-WZOZQ ref number to 664846770",
     "select": [
-      "DECLARE @ConversionCode VARCHAR(50) = 'FW140725-QVVZZ'",
-      "SELECT ParentConversionId, MainParentId, Id, * FROM Conversion WHERE ConversionCode = @ConversionCode",
-      "SELECT ParentConversionId, MainParentId, Id, * FROM Conversion WHERE ConversionCode = 'FW140725-QVVZZ'"
+      "DECLARE @ConversionCode VARCHAR(50) = 'FW250924-WZOZQ'",
+      "SELECT ParentConversionId, MainParentId, Id, * FROM Conversion WHERE ConversionCode = @ConversionCode"
     ],
     "update": [
       "UPDATE Conversion SET Id = '4435435', MainParentId = '4435435', ParentConversionId = '4435435' WHERE Conversion_id = 28669"
@@ -118,5 +115,47 @@
       "SELECT DISTINCT PM.PurposeCode FROM Payment PM LEFT JOIN PaymentPurposeCode PPC ON PPC.Name = PM.PurposeCode WHERE PM.PurposeCode IS NOT NULL AND PPC.Name IS NULL"
     ],
     "update": []
-  }
+  },
+  {
+  "id": 11,
+  "task": "Get a list of Portus Pay customers and emails",
+  "select": [
+    "-- For get a list of Portus Pay customers and emails",
+    "-- Time: 3 mins",
+    "DECLARE @BrandId INT = 0;",
+    "SELECT @BrandId = BrandId FROM Brand WHERE BrandName = 'Portus Pay';",
+    "SELECT",
+    "  B.BrandName,",
+    "  C.ContactFirstName AS Firstname,",
+    "  C.ContactMiddleName AS Middlename,",
+    "  C.ContactLastName AS Lastname,",
+    "  C.CompanyName,",
+    "  CASE WHEN C.ClientTypeId = 1 THEN 'Personal' ELSE 'Business' END AS ClientType,",
+    "  C.AccountNo,",
+    "  C.Email,",
+    "  ISNULL(E.EnumKey, 'Not Set') AS ComplianceStatus,",
+    "  C.StatusReason AS UnderReviewReason,",
+    "  CM.CountryName AS SuppCountry,",
+    "  E1.EnumKey AS RiskCategory,",
+    "  LU.Value AS Sector,",
+    "  LU1.Value AS SubSector,",
+    "  CASE WHEN C.IsActive = 1 THEN 'Yes' ELSE 'No' END AS IsActive,",
+    "  CASE WHEN C.IsApproved = 1 THEN 'Yes' ELSE 'No' END AS IsApproved,",
+    "  CASE WHEN C.IsDeleted = 1 THEN 'Yes' ELSE 'No' END AS IsDeleted,",
+    "  CASE WHEN C.IsLocked = 1 THEN 'Yes' ELSE 'No' END AS IsLocked,",
+    "  FORMAT(C.CreatedDate, 'dd-MMM-yy') AS CreatedDate",
+    "FROM Client C",
+    "LEFT JOIN BRAND B ON B.BrandId = C.BrandId",
+    "LEFT JOIN ClientBussiness CB ON CB.ClientId = C.ClientId",
+    "LEFT JOIN ClientAboutUs CA ON C.ClientTypeId = 1 AND CA.ClientId = C.ClientId",
+    "LEFT JOIN CountryMaster CM ON (CM.CountryId = CB.CountrySupp AND C.ClientTypeId = 2) OR (CM.CountryId = CA.Country AND C.ClientTypeId = 1)",
+    "LEFT JOIN LookUp LU ON LU.LookUpId = CB.Sector AND LU.Type = 'BusinessSector'",
+    "LEFT JOIN LookUp LU1 ON LU1.LookUpId = CB.SubSector AND LU1.Type = 'BusinessSubsector'",
+    "LEFT JOIN Enums E ON E.EnumValue = C.ComplianceStatus AND E.EnumType = 'CompilanceStatus'",
+    "LEFT JOIN Enums E1 ON E1.EnumValue = C.RiskCategoryId AND E1.EnumType = 'RiskCategory'",
+    "WHERE C.BrandId = @BrandId",
+    "ORDER BY C.IsDeleted ASC;"
+  ],
+  "update": []
+}
 ]
