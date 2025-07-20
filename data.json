@@ -1,9 +1,11 @@
 [
   {
     "id": 1,
-    "task": "Update Main Contact",
+    "task": "Update Main Contact's Name(Business/Personal)",
     "select": [
-      "DECLARE @ClientId BIGINT = 241638",
+      "DECLARE @AccountNo VARCHAR(30) = 'AU300424-TFZ'", 
+      "DECLARE @ClientId BIGINT = 0",
+      "SELECT @ClientId = ClientId FROM Client WHERE AccountNo = @AccountNo",
       "SELECT * FROM Client WHERE ClientId = @ClientId",
       "SELECT * FROM ClientAccUser WHERE ClientId = @ClientId",
       "SELECT * FROM UserMaster WHERE ClientId = @ClientId",
@@ -12,12 +14,22 @@
       "SELECT * FROM ClientOwnership WHERE ClientId = @ClientId"
     ],
     "update": [
-      "UPDATE Client SET ContactFirstName = 'Vladimir', ContactMiddleName = NULL, ContactLastName = 'Arteyev' WHERE ClientId = @ClientId",
-      "UPDATE Clientaboutus SET FirstName = 'Vladimir', MiddleName = NULL, LastName = 'Arteyev' WHERE ClientId = @ClientId",
-      "UPDATE ClientDirector SET FirstName = 'Vladimir', MiddleName = NULL, LastName = 'Arteyev' WHERE ClientId = @ClientId",
-      "UPDATE ClientOwnership SET FirstName = 'Vladimir', MiddleName = NULL, LastName = 'Arteyev' WHERE ClientId = @ClientId",
-      "UPDATE ClientAccUser SET FirstName = 'Vladimir', MiddleName = NULL, LastName = 'Arteyev' WHERE ClientId = @ClientId",
-      "UPDATE UserMaster SET FirstName = 'Vladimir', MiddleName = NULL, LastNmae = 'Arteyev' WHERE ClientId = @ClientId AND UserId = 273394"
+      "DECLARE @ClientId BIGINT = 241638",
+      "DECLARE @UserId BIGINT = 273394",
+      "DECLARE @FirstName NVARCHAR(100) = 'Vladimir'",
+      "DECLARE @MiddleName NVARCHAR(100) = NULL",
+      "DECLARE @LastName NVARCHAR(100) = 'Arteyev'",
+      "DECLARE @ClientTypeId INT = 0",
+      "SELECT @ClientTypeId = ClientTypeId FROM Client WHERE ClientId = @ClientId",
+      "UPDATE Client SET ContactFirstName = @FirstName, ContactMiddleName = @MiddleName, ContactLastName = @LastName WHERE ClientId = @ClientId",
+      "UPDATE ClientAccUser SET FirstName = @FirstName, MiddleName = @MiddleName, LastName = @LastName WHERE ClientId = @ClientId AND UserId = @UserId",
+      "UPDATE UserMaster SET FirstName = @FirstName, MiddleName = @MiddleName, LastNmae = @LastName WHERE ClientId = @ClientId AND UserId = @UserId",
+      "UPDATE Clientaboutus SET FirstName = @FirstName, MiddleName = @MiddleName, LastName = @LastName WHERE ClientId = @ClientId",
+      "IF @ClientTypeId = 2",
+      "BEGIN",
+      "    UPDATE ClientDirector SET FirstName = @FirstName, MiddleName = @MiddleName, LastName = @LastName WHERE ClientId = @ClientId",
+      "    UPDATE ClientOwnership SET FirstName = @FirstName, MiddleName = @MiddleName, LastName = @LastName WHERE ClientId = @ClientId",
+      "END"
     ]
   },
   {
@@ -157,5 +169,25 @@
     "ORDER BY C.IsDeleted ASC;"
   ],
   "update": []
+},
+{
+  "id": 12,
+  "task": "For Update a Contact's Name",
+  "select": [
+    "DECLARE @AccountNo VARCHAR(30) = 'AU300424-TFZ';",
+    "DECLARE @ClientId BIGINT = 0;",
+    "SELECT @ClientId = ClientId FROM Client WHERE AccountNo = @AccountNo;",
+    "SELECT * FROM ClientAccUser WHERE IsMainContact = 0 AND ClientId = @ClientId;",
+    "SELECT * FROM UserMaster WHERE ClientId = @ClientId AND RoleId = 4;"
+  ],
+  "update": [
+    "DECLARE @UserId BIGINT = 273394;",
+    "DECLARE @FirstName NVARCHAR(100) = 'Vladimir';",
+    "DECLARE @MiddleName NVARCHAR(100) = NULL;",
+    "DECLARE @LastName NVARCHAR(100) = 'Arteyev';",
+    "UPDATE ClientAccUser SET FirstName = @FirstName, MiddleName = @MiddleName, LastName = @LastName WHERE UserId = @UserId;",
+    "UPDATE UserMaster SET FirstName = @FirstName, MiddleName = @MiddleName, LastNmae = @LastName WHERE UserId = @UserId;"
+  ]
 }
+
 ]
