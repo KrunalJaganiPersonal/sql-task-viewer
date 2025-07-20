@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "task": "Update Main Contact's Name(Business/Personal)",
+    "task": "Update Main Client's Name",
     "select": [
       "DECLARE @AccountNo VARCHAR(30) = 'AU300424-TFZ'", 
       "DECLARE @ClientId BIGINT = 0",
@@ -169,25 +169,32 @@
     "ORDER BY C.IsDeleted ASC;"
   ],
   "update": []
-},
-{
-  "id": 12,
-  "task": "For Update a Contact's Name",
-  "select": [
-    "DECLARE @AccountNo VARCHAR(30) = 'AU300424-TFZ';",
-    "DECLARE @ClientId BIGINT = 0;",
-    "SELECT @ClientId = ClientId FROM Client WHERE AccountNo = @AccountNo;",
-    "SELECT * FROM ClientAccUser WHERE IsMainContact = 0 AND ClientId = @ClientId;",
-    "SELECT * FROM UserMaster WHERE ClientId = @ClientId AND RoleId = 4;"
-  ],
-  "update": [
-    "DECLARE @UserId BIGINT = 273394;",
-    "DECLARE @FirstName NVARCHAR(100) = 'Vladimir';",
-    "DECLARE @MiddleName NVARCHAR(100) = NULL;",
-    "DECLARE @LastName NVARCHAR(100) = 'Arteyev';",
-    "UPDATE ClientAccUser SET FirstName = @FirstName, MiddleName = @MiddleName, LastName = @LastName WHERE UserId = @UserId;",
-    "UPDATE UserMaster SET FirstName = @FirstName, MiddleName = @MiddleName, LastNmae = @LastName WHERE UserId = @UserId;"
-  ]
-}
-
+  },
+  {
+    "id": 12,
+    "task": "For Update a Contact's Name",
+    "select": [
+      "DECLARE @AccountNo VARCHAR(30) = 'AU300424-TFZ';",
+      "DECLARE @ClientId BIGINT = 0;",
+      "SELECT @ClientId = ClientId FROM Client WHERE AccountNo = @AccountNo;",
+      "SELECT * FROM ClientAccUser WHERE IsMainContact = 0 AND ClientId = @ClientId;",
+      "SELECT * FROM UserMaster WHERE ClientId = @ClientId AND RoleId = 4;"
+    ],
+    "update": [
+      "DECLARE @UserId BIGINT = 273394;",
+      "DECLARE @FirstName NVARCHAR(100) = 'Vladimir';",
+      "DECLARE @MiddleName NVARCHAR(100) = NULL;",
+      "DECLARE @LastName NVARCHAR(100) = 'Arteyev';",
+      "UPDATE ClientAccUser SET FirstName = @FirstName, MiddleName = @MiddleName, LastName = @LastName WHERE UserId = @UserId;",
+      "UPDATE UserMaster SET FirstName = @FirstName, MiddleName = @MiddleName, LastNmae = @LastName WHERE UserId = @UserId;"
+    ]
+  },
+  {
+    "id": 13,
+    "task": "Backup of any table",
+    "select": [
+      "SELECT * INTO NewBackupTable FROM OriginalTable"
+    ],
+    "update": []
+  }
 ]
