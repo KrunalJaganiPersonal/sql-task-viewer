@@ -88,4 +88,14 @@ h2 {
   color: #555;
   font-style: italic;
 }
+.show-more-btn {
+  padding: 0.2em 0.6em;
+  font-weight: bold;
+  display: inline-block;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+
+
 

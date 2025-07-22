@@ -196,5 +196,114 @@
       "SELECT * INTO NewBackupTable FROM OriginalTable"
     ],
     "update": []
+  },
+   {
+    "id": 14,
+    "task": "Beneficiary address change",
+    "select": [
+      "--For Get",
+      "select BeneficiaryCCRefId,BeneficiaryType,* from BeneficiaryMaster where BeneficiaryCCRefId='b7d0d8c4-043e-46e3-8798-25911ff1ef4b'"
+    ],
+    "update": [
+      "Update BeneficiaryMaster",
+      "SET Beneficiary_address='7',Beneficiary_address1='Morsestrae',Beneficiary_city='Rheine',Beneficiary_postcode='48432' where BeneficiaryId=336106"
+    ]
+  },
+  {
+  "id": 15,
+  "task": "Please update FW030425-ZZSZS-F sucden ref to 664962729 and swap sold to 7,588.05 and update swap pnl",
+  "select": [
+    "-- Review existing Conversion details before update",
+    "SELECT * FROM Conversion WHERE ConversionCode = 'FW030425-ZZSZS-F';"
+  ],
+  "update": [
+      "-- Declare all required variables",
+      "DECLARE @ConversionCode VARCHAR(50) = 'FW030425-ZZSZS-F';",
+      "DECLARE @ConversionId BIGINT;",
+      "DECLARE @IFXTradeRefNo BIGINT = 664962729;",
+      "DECLARE @NewSwapSellAmount DECIMAL(18, 2) = 7588.05;",
+      "DECLARE @SwapProfitLoss DECIMAL(18, 2);",
+      "DECLARE @FixedSide VARCHAR(10);",
+      "DECLARE @LPSellAmount DECIMAL(18, 2);",
+      "DECLARE @CoreBuyAmount DECIMAL(18, 2);",
+      "DECLARE @SwapBuyAmount DECIMAL(18, 2);",
+
+      "-- Fetch required values from Conversion",
+      "SELECT ",
+      "    @ConversionId = Conversion_id,",
+      "    @FixedSide = Fixed_side,",
+      "    @LPSellAmount = LPSellAmount,",
+      "    @CoreBuyAmount = CoreBuyAmount,",
+      "    @SwapBuyAmount = SwapBuyAmount",
+      "FROM Conversion",
+      "WHERE ConversionCode = @ConversionCode;",
+
+      "-- Calculate SwapProfitLoss",
+      "SET @SwapProfitLoss = ",
+      "    CASE ",
+      "        WHEN @FixedSide = 'buy' THEN @LPSellAmount - @NewSwapSellAmount",
+      "        ELSE @SwapBuyAmount - @CoreBuyAmount",
+      "    END;",
+
+      "-- Update IFX ref and SwapSellAmount",
+      "UPDATE Conversion",
+      "SET IFX_Trade_ReferenceNo = @IFXTradeRefNo,",
+      "    SwapSellAmount = @NewSwapSellAmount",
+      "WHERE ConversionCode = @ConversionCode;",
+
+      "-- Update SwapProfitLoss",
+      "UPDATE Conversion",
+      "SET SwapProfitLoss = @SwapProfitLoss",
+      "WHERE Conversion_id = @ConversionId AND ConversionCode = @ConversionCode;"
+    ]
+  },
+  {
+    "id": 16,
+    "task": "Get a list of all client with last trade",
+    "select": [
+      "--For get a clients with last trade date",
+      "-- Time: 3 mins",
+      "-- First get the latest conversion per client",
+      "WITH LatestConversions AS (",
+      "    SELECT ",
+      "        ClientId, ",
+      "        MAX(CreatedDate) AS LastTradedDate",
+      "    FROM Conversion",
+      "    GROUP BY ClientId",
+      ")",
+      "SELECT",
+      "  B.BrandName,",
+      "  C.AccountNo,",
+      "  CASE WHEN C.ClientTypeId = 1 THEN 'Private' ELSE 'Corporate' END AS ClientType,",
+      "  C.CompanyName,",
+      "  C.ContactFirstName AS Firstname,",
+      "  C.ContactMiddleName AS Middlename,",
+      "  C.ContactLastName AS Lastname,",
+      "  C.Email,",
+      "  CAST(E.EnumKey AS VARCHAR) AS [AccountStatus],",       
+      "  E2.EnumKey AS [Statusreason],",                     
+      "  FORMAT(C.CreatedDate, 'dd-MMM-yy') AS [Date Opened],",
+      "  CAST(E1.EnumKey AS VARCHAR) AS [Risk Score],",  
+      "  C.StatusReason AS UnderReviewReason,",
+      "  CASE WHEN C.IsActive = 1 THEN 'Yes' ELSE 'No' END AS IsActive,",
+      "  CASE WHEN C.IsDeleted = 1 THEN 'Yes' ELSE 'No' END AS IsDeleted,",
+      "  CASE WHEN C.IsLocked = 1 THEN 'Yes' ELSE 'No' END AS IsLocked,",
+      "  FORMAT(L.LastTradedDate, 'dd-MMM-yy') AS [Date Last Traded],",
+      "  CM1.CountryName AS UserCountry,",
+      "  CM.CountryName AS BusinessCountry",
+      "FROM Client C",
+      "LEFT JOIN UserMaster UM ON UM.ClientId = C.ClientId",
+      "LEFT JOIN LatestConversions L ON L.ClientId = C.ClientId",
+      "LEFT JOIN BRAND B ON B.BrandId = C.BrandId",
+      "LEFT JOIN ClientBussiness CB ON CB.ClientId = C.ClientId",
+      "LEFT JOIN ClientAboutUs CA ON C.ClientTypeId = 1 AND CA.ClientId = C.ClientId",
+      "LEFT JOIN CountryMaster CM ON (CM.CountryId = CB.CountrySupp AND C.ClientTypeId = 2) OR (CM.CountryId = CA.Country AND C.ClientTypeId = 1)",
+      "LEFT JOIN CountryMaster CM1 ON CM1.CountryId = UM.Country",
+      "LEFT JOIN Enums E ON E.EnumValue = C.ComplianceStatus AND E.EnumType = 'CompilanceStatus'",
+      "LEFT JOIN Enums E1 ON E1.EnumValue = C.RiskCategoryId AND E1.EnumType = 'RiskCategory'",
+      "LEFT JOIN Enums E2 ON E2.EnumValue = C.StatusReason AND E2.EnumType='StatusReason'",
+      "ORDER BY C.CreatedDate ASC;"
+    ],
+    "update": []
   }
 ]

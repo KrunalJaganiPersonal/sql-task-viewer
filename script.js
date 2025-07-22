@@ -1,6 +1,7 @@
 let taskData = [];
 let currentPage = 1;
 const recordsPerPage = 10;
+const singleBreakIds = [11, 15, 16];
 
 document.addEventListener("DOMContentLoaded", function () {
   const taskTableBody = document.getElementById("taskTableBody");
@@ -26,53 +27,88 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function renderTable(data) {
-    taskTableBody.innerHTML = "";
-    data.forEach((item) => {
-      const tr = document.createElement("tr");
+  taskTableBody.innerHTML = "";
 
-      tr.innerHTML = `
-        <td style="text-align: center;">${item.id || ""}</td>
-        <td>${item.task || ""}</td>
-        <td class="cursor-pointer copyable">
-          ${Array.isArray(item.select)
-            ? item.select.map((line, i) =>
-                i === 0
-                  ? line
-                  : `${item.id === 11 ? '<br>' : '<br><br>'}${line}`
-              ).join('')
-            : item.select || ""}
-        </td>
-        <td class="cursor-pointer copyable">
-          ${Array.isArray(item.update)
-            ? item.update.map((line, i) =>
-                i === 0
-                  ? line
-                  : `${item.id === 11 ? '<br>' : '<br><br>'}${line}`
-              ).join('')
-            : item.update || ""}
-        </td>
-      `;
+  data.forEach((item) => {
+    const tr = document.createElement("tr");
 
-      tr.querySelectorAll(".copyable").forEach(cell => {
-        cell.addEventListener("click", () => {
-          const isSelectCell = cell.cellIndex === 2;
-          const isUpdateCell = cell.cellIndex === 3;
-          const dataArray = isSelectCell ? item.select : item.update;
+    function createCellContent(contentArray, type) {
+      if (!Array.isArray(contentArray)) return contentArray || "";
 
-          if (Array.isArray(dataArray)) {
-            const joinedText = dataArray.map((line, i) =>
-              i === 0 ? line : `${item.id === 11 ? '\n' : '\n\n'}${line}`
-            ).join('');
-            navigator.clipboard.writeText(joinedText).then(() => toast.show());
-          } else {
-            navigator.clipboard.writeText(cell.textContent).then(() => toast.show());
-          }
-        });
+      const joiner = singleBreakIds.includes(item.id) ? "<br>" : "<br><br>";
+      const lineLimit = 3;
+
+      const fullHTML = contentArray.map((line, i) =>
+        i === 0 ? line : `${joiner}${line}`
+      ).join('');
+
+      if (contentArray.length <= lineLimit) {
+        return `<div class="copyable cursor-pointer">${fullHTML}</div>`;
+      }
+
+      const previewHTML = contentArray
+        .slice(0, lineLimit)
+        .map((line, i) => (i === 0 ? line : `${joiner}${line}`))
+        .join('');
+
+      return `
+        <div class="text-snippet copyable cursor-pointer" data-type="${type}" data-id="${item.id}" data-full="${escapeHtml(contentArray.join('\n\n'))}">
+          <div class="preview">${previewHTML}</div>
+          <span class="toggle-more badge rounded-pill bg-light text-dark border show-more-btn" style="cursor:pointer;">...</span>
+          <div class="full-text d-none mt-1">${fullHTML}</div>
+        </div>`;
+    }
+
+    tr.innerHTML = `
+      <td style="text-align: center;">${item.id || ""}</td>
+      <td>${item.task || ""}</td>
+      <td class="select-cell">${createCellContent(item.select, 'select')}</td>
+      <td class="update-cell">${createCellContent(item.update, 'update')}</td>
+    `;
+
+    // Toggle expand/collapse — prevent copy
+    tr.querySelectorAll(".show-more-btn").forEach(btn => {
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation(); // prevent bubble to copy
+
+        const wrapper = this.closest(".text-snippet");
+        const fullText = wrapper.querySelector(".full-text");
+        const preview = wrapper.querySelector(".preview");
+
+        if (fullText.classList.contains("d-none")) {
+          fullText.classList.remove("d-none");
+          preview.classList.add("d-none");
+          this.innerText = "↑";
+        } else {
+          fullText.classList.add("d-none");
+          preview.classList.remove("d-none");
+          this.innerText = "...";
+        }
       });
-
-      taskTableBody.appendChild(tr);
     });
-  }
+
+    // Copy full content
+    tr.querySelectorAll(".copyable").forEach(cell => {
+      cell.addEventListener("click", () => {
+        let rawText;
+
+        if (cell.dataset.full) {
+          const id = parseInt(cell.dataset.id);
+          const fullArray = unescapeHtml(cell.dataset.full).split(/\n{2}|\n/g); // split by line breaks
+          const joiner = singleBreakIds.includes(id) ? '\n' : '\n\n';
+          rawText = fullArray.join(joiner);
+        } else {
+          rawText = cell.innerText.trim();
+        }
+        
+        navigator.clipboard.writeText(rawText).then(() => toast.show());
+      });
+    });
+
+    taskTableBody.appendChild(tr);
+  });
+}
+
 
   function renderTablePage() {
     const start = (currentPage - 1) * recordsPerPage;
@@ -195,4 +231,27 @@ function getPlainText(cell) {
   const tempDiv = document.createElement("div");
   tempDiv.innerHTML = cell.innerHTML;
   return tempDiv.innerText.replace(/\n\n/g, '\n');
+}
+function escapeHtml(str) {
+  return str.replace(/[&<>'"]/g, function (c) {
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[c];
+  });
+}
+
+function unescapeHtml(str) {
+  return str.replace(/&(amp|lt|gt|quot|#39);/g, function (m, code) {
+    return {
+      amp: '&',
+      lt: '<',
+      gt: '>',
+      quot: '"',
+      '#39': "'"
+    }[code];
+  });
 }
