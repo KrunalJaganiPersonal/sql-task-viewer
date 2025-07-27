@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Country Master Viewer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #d0b3e6;
+    }
+    footer {
+      background: #fff;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      border-top: 1px solid #ccc;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+    }
+    /* Overlay on main content for better readability */
+    .bg-light-overlay {
+      background-color: rgba(255, 255, 255, 0.94);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+<body class="p-4 d-flex flex-column min-vh-100">
+
+  <div class="d-flex justify-content-center mb-4 gap-2">
+    <button class="btn btn-primary" onclick="window.location.href='../index.html'">SQL Task View</button>
+    <button class="btn btn-warning" onclick="window.location.href='../find-country/index.html'">Find Country</button>
+    <button class="btn btn-success" onclick="window.location.href='../find-currency/index.html'">Find Currency</button>
+  </div>
+  <div id="mainContent" class="bg-light-overlay">
+  <h2 class="text-center mb-4">Country Master</h2>
+
+  <!-- Search + Top Pagination -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <div class="flex-grow-1">
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input type="text" id="countrySearchInput" class="form-control" placeholder="Search by country, code, currency...">
+      </div>
+    </div>
+    <div id="countryPaginationTop" class="d-flex flex-wrap gap-1"></div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped bg-white">
+      <thead class="table-success">
+        <tr>
+          <th>CountryId</th>
+          <th>CountryCode</th>
+          <th>CountryName</th>
+          <th>ShortCode</th>
+          <th>CurrencyCode</th>
+          <th>CurrencyName</th>
+          <th>CurrencySymbol</th>
+          <th>CurrencyId</th>
+          <th>CountryShortCode</th>
+          <th>CountryAlpha3Code</th>
+          <th>RiskScore</th>
+          <th>IBANexist</th>
+          <th>IBANlength</th>
+          <th>DisplayNumber</th>
+        </tr>
+      </thead>
+      <tbody id="countryTableBody"></tbody>
+    </table>
+  </div>
+
+<!-- Bottom Row: Pagination on Left, Copyright on Right -->
+<div class="container-fluid mt-4 px-0">
+  <div class="row align-items-center py-2 bg-white border-top shadow-sm">
+    <div class="col-12 col-md-6 mb-2 mb-md-0 text-start" id="countryPaginationBottom">
+      <!-- Pagination buttons injected by JS -->
+    </div>
+    <div class="col-12 col-md-6 text-end text-muted small">
+      &copy; Copyright reserved by <strong>Krunal Jagani</strong> - 2025
+    </div>
+  </div>
+</div>
+
+</div>
+  <script src="script.js"></script>
+</body>
+</html>
