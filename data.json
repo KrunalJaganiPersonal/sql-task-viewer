@@ -305,5 +305,83 @@
       "ORDER BY C.CreatedDate ASC;"
     ],
     "update": []
+  },
+  {
+    "id": 17,
+    "task": "Update partner funding id number for F180725-ZOSQN - New: UCP3502490",
+    "select": [
+      "DECLARE @SystemCode VARCHAR(50) = 'F180725-ZOSQN', @AccFundingId BIGINT;",
+      "SELECT @AccFundingId = AccFundingId FROM AccountFunding WHERE SystemCode = @SystemCode;",
+      "SELECT * FROM AccountFunding WHERE AccFundingId = @AccFundingId;",
+      "SELECT * FROM IFX_Funding WHERE AccFundingId = @AccFundingId;"
+    ],
+    "update": [
+      "UPDATE IFX_Funding SET Reference = 'UCP3502490' WHERE AccFundingId = @AccFundingId;",
+      "SELECT * FROM IFX_Funding WHERE AccFundingId = @AccFundingId;"
+    ]
+  },
+  {
+  "id": 18,
+  "task": "Update FW230725-VUZZZ client rate to 1.35, update client sold to 185185.19 and update profits etc",
+  "select": [
+    "DECLARE @ConversionCode VARCHAR(50) = 'FW230725-VUZZZ';",
+    "DECLARE @NewClientRate DECIMAL(18,5) = 1.35;",
+    "DECLARE @NewClientSellAmount DECIMAL(18,2) = 185185.19;",
+    "SELECT 'OLD' AS Version, ClientRate, Client_sell_amount, TotalProfit, ProfAndLoss, LPCharge, SpreadPerc, ProfitGBPEst FROM Conversion WHERE ConversionCode = @ConversionCode;"
+  ],
+  "update": [
+    "-- Step 2: Prepare variables",
+    "DECLARE @ConversionId BIGINT, @Fixed_side VARCHAR(10), @Deposit_amount DECIMAL(18,2), @IsManualEntry BIT, @IsForward BIT, @Core_rate DECIMAL(18,5), @FixedAmount DECIMAL(18,2), @LPAmount DECIMAL(18,2), @Client_buy_amount DECIMAL(18,2), @Client_sell_amount DECIMAL(18,2), @ProfitCurrency VARCHAR(10), @LiquidityProvider INT, @Completed_date DATETIME, @created_at DATETIME, @CoreAmount DECIMAL(18,2), @ClientAmount DECIMAL(18,2), @TotalProfit DECIMAL(18,2), @ProfAndLoss DECIMAL(18,2), @GBPEquivRate DECIMAL(18,5), @ProfitGBPEst DECIMAL(18,2);",
+    "-- Step 3: Fetch required info",
+    "SELECT @ConversionId = Conversion_id, @Fixed_side = Fixed_side, @Deposit_amount = Deposit_amount, @IsManualEntry = IsManualEntry, @IsForward = IsForward, @Core_rate = Core_rate, @LPAmount = LPSellAmount, @Client_buy_amount = Client_buy_amount, @Client_sell_amount = Client_sell_amount, @ProfitCurrency = ProfitCurrency, @LiquidityProvider = Liquidityprovider, @Completed_date = Completed_date, @created_at = CreatedDate FROM Conversion WHERE ConversionCode = @ConversionCode;",
+    "-- Step 4: Calculate",
+    "SET @FixedAmount = CASE WHEN @Fixed_side = 'buy' THEN @Client_buy_amount ELSE @Client_sell_amount END;",
+    "IF (@Fixed_side = 'buy') BEGIN SET @CoreAmount = CASE WHEN @LiquidityProvider = 2 THEN @LPAmount ELSE @FixedAmount / @Core_rate END; SET @ClientAmount = @NewClientSellAmount; SET @TotalProfit = @ClientAmount - @CoreAmount; SET @ProfAndLoss = @ClientAmount - @LPAmount; END ELSE BEGIN SET @CoreAmount = CASE WHEN @LiquidityProvider = 2 THEN @LPAmount ELSE @FixedAmount * @Core_rate END; SET @ClientAmount = @Client_buy_amount; SET @TotalProfit = @CoreAmount - @ClientAmount; SET @ProfAndLoss = @LPAmount - @ClientAmount; END",
+    "IF @ProfitCurrency != 'GBP' BEGIN SET @GBPEquivRate = ISNULL((SELECT Rate FROM GBPEqivRates WHERE CurrencyPair = 'GBP' + @ProfitCurrency AND Date = CAST(ISNULL(@Completed_date, @created_at) AS DATE)), (SELECT TOP 1 Rate FROM GBPEqivRates WHERE CurrencyPair = 'GBP' + @ProfitCurrency ORDER BY Date DESC)); END",
+    "SET @ProfitGBPEst = CASE WHEN @ProfitCurrency = 'GBP' THEN @TotalProfit ELSE CAST(@TotalProfit / NULLIF(@GBPEquivRate, 0) AS DECIMAL(18,2)) END;",
+    "-- Step 5: Perform update",
+    "UPDATE Conversion SET Client_sell_amount = @NewClientSellAmount, OriginalSellAmount = @NewClientSellAmount, RemainingSellAmount = @NewClientSellAmount, ClientRate = @NewClientRate, Client_rate = @NewClientRate, TotalProfit = @TotalProfit, ProfAndLoss = @ProfAndLoss, LPCharge = @TotalProfit - @ProfAndLoss, SpreadPerc = ROUND(100 - ((@NewClientRate / NULLIF(@Core_rate, 0)) * 100), 2), ProfitGBPEst = @ProfitGBPEst WHERE Conversion_id = @ConversionId AND ConversionCode = @ConversionCode;",
+    "-- Step 6: Show NEW values after update",
+    "SELECT 'NEW' AS Version, ClientRate, Client_sell_amount, TotalProfit, ProfAndLoss, LPCharge, SpreadPerc, ProfitGBPEst FROM Conversion WHERE ConversionCode = @ConversionCode;"
+  ]
+  },
+  {
+    "id": 19,
+    "task": "Check if payment is done on IFX but not submitted on our side",
+    "select": [
+      "SELECT * FROM Payment WHERE IsInitiated = 1 AND Status NOT IN ('failed', 'completed', 'submitted', 'returned') AND ISNULL(IsDeleted, 0) != 1 ORDER BY 1 DESC"
+    ],
+    "update": []
+  },
+  {
+    "id": 20,
+    "task": "Push Petanquesport LLC (US240725-CQZ) to PassFort",
+    "select": [
+      "-- Get ClientId",
+      "SELECT @ClientId = ClientId FROM Client WHERE AccountNo = @AccountNo;",
+      "-- BEFORE update",
+      "SELECT SourceOfFund, SourceOfFundOther, * FROM ClientUsingUs WHERE ClientId = @ClientId;",
+      "-- Get existing SourceOfFund LookUpId",
+      "SELECT @LookUpId = SourceOfFund FROM ClientUsingUs WHERE ClientId = @ClientId;",
+      "-- Get LookUp value for SourceOfFund",
+      "SELECT @LookUpIdValue = Value FROM LookUp WHERE Type = 'SourceOfFund' AND LookUpId = @LookUpId;"
+    ],
+    "update": [
+      "-- Perform update",
+      "UPDATE ClientUsingUs SET SourceOfFund = 168, SourceOfFundOther = @LookUpIdValue WHERE ClientId = @ClientId;",
+      "-- AFTER update",
+      "SELECT SourceOfFund, SourceOfFundOther, * FROM ClientUsingUs WHERE ClientId = @ClientId;"
+    ]
+  },
+  {
+    "id": 21,
+    "task": "Confirm when/who deleted this funding F140525-ZOZZT",
+    "select": [
+      "DECLARE @ModifiedBy BIGINT = 0, @Systemcode VARCHAR(50) = 'F140525-ZOZZT';",
+      "SELECT @ModifiedBy = ModifiedBy FROM IFX_Funding WHERE SystemCode = @Systemcode;",
+      "SELECT IsDeleted, ModifiedBy, ModifiedDate, * FROM IFX_Funding WHERE SystemCode = @Systemcode;",
+      "SELECT * FROM UserMaster WHERE UserId = @ModifiedBy;"
+    ],
+    "update": []
   }
 ]
