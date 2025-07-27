@@ -67,7 +67,7 @@ h2 {
 
 /* Centered login modal adjustments */
 #loginModal .modal-dialog {
-  margin: 10vh auto; 
+  margin: 3vh auto !important;  
 }
 
 /* Logout confirmation modal centering */
