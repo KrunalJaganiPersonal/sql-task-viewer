@@ -170,6 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
       loginModal.hide();
       mainContent.classList.remove("d-none");
       logoutContainer.classList.remove("d-none");
+      navButtons.classList.remove("d-none");
       if (isAdmin) addButton.classList.remove("d-none");
 
       fetchData();
@@ -184,6 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (currentUser) {
     mainContent.classList.remove("d-none");
     logoutContainer.classList.remove("d-none");
+    navButtons.classList.remove("d-none");
     if (userRole === "admin") addButton.classList.remove("d-none");
     fetchData();
   } else {
