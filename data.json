@@ -71,14 +71,17 @@
   },
   {
     "id": 5,
-    "task": "Please update FW250924-WZOZQ-D ref number to 664846770 and new VD 29/07/2025",
+    "task": "Please update FW250924-WZOZQ-D - deal ref to 665126200 and new VD to 12/08/2025",
     "select": [
-      "DECLARE @ConversionCode VARCHAR(50) = 'FW140725-QVVZZ-A'",
-      "SELECT ParentConversionId, MainParentId, Id,Status, * FROM Conversion WHERE ConversionCode = @ConversionCode",
-      "SELECT ParentConversionId, MainParentId, Id,Status, * FROM Conversion WHERE ConversionCode = 'FW140725-QVVZZ'"
+      "-- SELECT STATEMENT",
+      "DECLARE @ConversionCode VARCHAR(50) = 'FW250924-WZOZQ-D', @Conversion_id BIGINT = 0;",
+      "SELECT @Conversion_id = Conversion_id FROM Conversion WHERE ConversionCode = @ConversionCode;",
+      "SELECT ParentConversionId, MainParentId, Id, Status, * FROM Conversion WHERE ConversionCode = @ConversionCode;",
+      "SELECT ParentConversionId, MainParentId, Id, Status, * FROM Conversion WHERE ConversionCode = 'FW250924-WZOZQ';"
     ],
     "update": [
-      "UPDATE Conversion SET ParentConversionId = 4435435, Settlement_date = '2025-07-29 00:00:00.000' WHERE Conversion_id = 28669"
+      "-- UPDATE STATEMENT",
+      "UPDATE Conversion SET ParentConversionId = '665126200', Settlement_date = '2025-08-12 00:00:00.000' WHERE ConversionCode = @ConversionCode AND Conversion_id = @Conversion_id;"
     ]
   },
   {
