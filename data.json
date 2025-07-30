@@ -485,5 +485,15 @@
       "SELECT * FROM UserMaster WHERE UserId = @ModifiedBy;"
     ],
     "update": []
+  },
+  {
+  "id": 22,
+  "task": "Get the creation date of a table named 'YourTableName'",
+  "select": [
+    "SELECT t.name AS TableName, t.create_date, t.modify_date",
+    "FROM sys.tables t",
+    "WHERE t.name = 'YourTableName';"
+  ],
+  "update": []
   }
 ]
