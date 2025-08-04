@@ -14,9 +14,11 @@ body {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -67,12 +69,12 @@ h2 {
 
 /* Centered login modal adjustments */
 #loginModal .modal-dialog {
-  margin: 3vh auto !important;  
+  margin: 3vh auto !important;
 }
 
 /* Logout confirmation modal centering */
 #logoutModal .modal-dialog {
-   margin: 10vh auto; 
+  margin: 10vh auto;
 }
 
 /* Overlay on main content for better readability */
@@ -80,7 +82,7 @@ h2 {
   background-color: rgba(255, 255, 255, 0.94);
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
 .copyright-note {
@@ -88,14 +90,235 @@ h2 {
   color: #555;
   font-style: italic;
 }
+
 .show-more-btn {
   padding: 0.2em 0.6em;
   font-weight: bold;
   display: inline-block;
 }
+
 .cursor-pointer {
   cursor: pointer;
 }
 
 
+.modal-content.login-modal-content {
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
 
+.modal-body.d-flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.login-form-side,
+.welcome-side {
+  flex: 1 1 50%;
+  padding: 2.5rem;
+  min-height: 100%;
+}
+
+.login-form-side {
+  background: #fff;
+}
+
+.login-form-side h3 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.login-form-side .form-control {
+  border-radius: 0.5rem;
+}
+
+.login-form-side .btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 2rem;
+  font-weight: 600;
+  padding: 0.6rem;
+}
+
+.login-form-side .btn:hover {
+  background: linear-gradient(135deg, #5f2c82, #49a09d);
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.social-icons .icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 18px;
+  transition: 0.3s;
+  text-decoration: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.icon.facebook {
+  background: #3b5998;
+}
+
+.icon.google {
+  background: #db4437;
+}
+
+.icon.linkedin {
+  background: #0077b5;
+}
+
+.icon.github {
+  background: #333;
+}
+
+.icon.gmail {
+  background: #ea4335;
+}
+
+.social-icons .icon:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+.welcome-side {
+  background: linear-gradient(135deg, #5f2c82, #49a09d);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-top-left-radius: 4rem;
+  border-bottom-left-radius: 4rem;
+}
+
+.welcome-side h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.welcome-side p {
+  font-size: 1rem;
+  margin: 1rem 0;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #fff;
+  padding: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-body.d-flex {
+    flex-direction: column-reverse;
+  }
+
+  .welcome-side {
+    border-radius: 0;
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+  }
+
+  .login-form-side,
+  .welcome-side {
+    flex: 1 1 100%;
+    padding: 2rem;
+  }
+}
+
+.glass-modal {
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.logout-icon-glow {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #ff5f6d, #a53c1f);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(255, 99, 71, 0.4);
+}
+
+.logout-icon-inner {
+  color: #fff;
+  font-size: 2rem;
+}
+
+.logout-icon-glow:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+.btn-gradient {
+  background: linear-gradient(135deg, #ff5f6d, #ffc371);
+  border: none;
+  color: white;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #e8505b, #ffb347);
+}
+
+@media (max-width: 576px) {
+  .modal-dialog {
+    max-width: 95% !important;
+    margin: 1rem auto;
+  }
+
+  .modal-content.login-modal-content {
+    border-radius: 1rem;
+  }
+
+  .modal-body.d-flex {
+    flex-direction: column-reverse !important;
+    padding: 0 !important;
+  }
+
+  .login-form-side,
+  .welcome-side {
+    width: 100%;
+    padding: 1.5rem;
+    text-align: center;
+    border-radius: 0 !important;
+  }
+
+  .welcome-side {
+    background: linear-gradient(135deg, #5f2c82, #49a09d);
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+  }
+
+  .avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .btn {
+    font-size: 0.95rem;
+  }
+}

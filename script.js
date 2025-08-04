@@ -2,6 +2,7 @@ let taskData = [];
 let currentPage = 1;
 const recordsPerPage = 10;
 const singleBreakIds = [11, 15, 16];
+let loginModal;
 
 document.addEventListener("DOMContentLoaded", function () {
   const taskTableBody = document.getElementById("taskTableBody");
@@ -181,6 +182,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const currentUser = localStorage.getItem("loggedInUser");
   const userRole = localStorage.getItem("userRole");
+
+  const loginModalElement = document.getElementById("loginModal");
+  if (loginModalElement && !loginModal) {
+    loginModal = new bootstrap.Modal(loginModalElement, {
+      backdrop: 'static',
+      keyboard: false
+    });
+  }
 
   if (currentUser) {
     mainContent.classList.remove("d-none");

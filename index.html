@@ -6,14 +6,16 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+
 </head>
 <body class="p-4 bg-light">
+  <!-- Nav Buttons -->
   <div id="navButtons" class="d-flex justify-content-center mb-4 gap-2 d-none">
     <button class="btn btn-primary" onclick="window.location.href='index.html'">SQL Task View</button>
     <button class="btn btn-warning" onclick="window.location.href='find-country/index.html'">Find Country</button>
     <button class="btn btn-success" onclick="window.location.href='find-currency/index.html'">Find Currency</button>
   </div>
-
 
   <!-- Logout Button -->
   <div id="logoutContainer" class="position-absolute m-3 d-none">
@@ -23,24 +25,18 @@
     </button>
   </div>
 
-
-
-  <!-- Main App Content (hidden before login) -->
+  <!-- Main App Content -->
   <div id="mainContent" class="d-none bg-light-overlay">
-
-    <!-- Title -->
     <h2 class="text-center mb-4">SQL Tasks Viewer</h2>
 
-<!-- Add Button above Search -->
-<div id="addButtonContainer" class="d-flex justify-content-end mb-2 d-none">
-  <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addTaskModal">+ Add Task</button>
-</div>
-
+    <!-- Add Button -->
+    <div id="addButtonContainer" class="d-flex justify-content-end mb-2 d-none">
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addTaskModal">+ Add Task</button>
+    </div>
 
     <!-- Search -->
     <div class="container-fluid px-0 mb-3">
       <div class="row g-2 align-items-center">
-        <!-- Search Bar: Wider (10/12 columns) -->
         <div class="col-12 col-md-10">
           <div class="input-group w-100">
             <span class="input-group-text bg-white">
@@ -49,14 +45,9 @@
             <input type="text" id="searchInput" class="form-control" placeholder="Search by Task name...">
           </div>
         </div>
-
-        <!-- Pagination Buttons: Smaller (2/12 columns) -->
-        <div class="col-12 col-md-2 text-md-end" id="paginationControls">
-          <!-- Injected by JS -->
-        </div>
+        <div class="col-12 col-md-2 text-md-end" id="paginationControls"></div>
       </div>
     </div>
-
 
     <!-- Table -->
     <div class="table-responsive">
@@ -69,25 +60,18 @@
             <th>Update Statement</th>
           </tr>
         </thead>
-        <tbody id="taskTableBody">
-          <!-- Injected by JS -->
-        </tbody>
+        <tbody id="taskTableBody"></tbody>
       </table>
     </div>
-    <!-- Bottom Row: Pagination on Left, Copyright on Right -->
-   <div class="container-fluid mt-3 px-0">
-    <div class="row align-items-center">
-      <div class="col-12 col-md-6 mb-1 text-start" id="paginationControlsBottom">
-        <!-- Injected by JS -->
+
+    <!-- Bottom Row -->
+    <div class="container-fluid mt-3 px-0">
+      <div class="row align-items-center">
+        <div class="col-12 col-md-6 mb-1 text-start" id="paginationControlsBottom"></div>
+        <div class="col-12 col-md-6 text-end copyright-note">
+          © Copyright reserved by <strong>Krunal Jagani</strong> - 2025
+        </div>
       </div>
-      <div class="col-12 col-md-6 text-end copyright-note">
-        © Copyright reserved by <strong>Krunal Jagani</strong> - 2025
-      </div>
-    </div>
-
-
-
-
     </div>
 
     <!-- Toast -->
@@ -122,7 +106,6 @@
               <textarea class="form-control" id="updateQuery" rows="2" required></textarea>
             </div>
           </div>
-          
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Save Task</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -132,51 +115,83 @@
     </div>
   </div>
 
-  <!-- Login Modal -->
+    <!-- Login Modal -->
   <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form id="loginForm">
-          <div class="modal-header">
-            <h5 class="modal-title">Login Required</h5>
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content login-modal-content">
+        <div class="modal-body d-flex p-0">
+          <!-- Left Side: Login Form -->
+          <div class="login-form-side">
+            <h3 class="mb-3 text-center">Sign In</h3>
+
+          <div class="social-icons text-center mb-3">
+            <a href="https://www.facebook.com/profile.php?id=61556771394197" target="_blank" class="icon facebook" title="Facebook - Krunal Jagani">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="mailto:krunal.shaligram@gmail.com" class="icon gmail" title="Email - krunal.shaligram@gmail.com">
+              <i class="fas fa-envelope"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/krunal-jagani-92070b224/" target="_blank" class="icon linkedin" title="LinkedIn - Krunal Jagani">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="https://github.com/KrunalJaganiPersonal" target="_blank" class="icon github" title="GitHub - KrunalJaganiPersonal">
+              <i class="fab fa-github"></i>
+            </a>
+            <a href="https://www.instagram.com/krunal__jagani/" target="_blank" class="icon google" title="Instagram - krunal__jagani">
+              <i class="fab fa-instagram"></i>
+            </a>
           </div>
-          
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Username</label>
-              <input type="text" id="loginUsername" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Password</label>
-              <input type="password" id="loginPassword" class="form-control" required>
-            </div>
-            <div id="loginError" class="text-danger d-none">Invalid credentials. Try again.</div>
+
+
+            <p class="text-center text-muted mb-4">or use your email account</p>
+
+            <form id="loginForm">
+              <div class="mb-3">
+                <input type="text" id="loginUsername" class="form-control" placeholder="Username" required />
+              </div>
+              <div class="mb-3">
+                <input type="password" id="loginPassword" class="form-control" placeholder="Password" required />
+              </div>
+              <div class="text-end mb-3">
+                <a href="#" class="text-muted text-decoration-none small">Forgot Your Password?</a>
+              </div>
+              <div>
+                <button type="submit" class="btn btn-primary w-100">Sign In</button>
+              </div>
+            </form>
           </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Login</button>
+
+          <!-- Right Side: Welcome -->
+          <div class="welcome-side">
+            <h2>SmartSQL Viewer</h2>
+            <p>Manage your SQL tasks and updates effortlessly with <strong>Krunal Jagani's App</strong></p>
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="avatar mt-3" alt="avatar" />
           </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Logout Confirmation Modal -->
-  <div class="modal fade" id="logoutModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Confirm Logout</h5>
+<!-- Logout Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content logout-modal shadow-lg border-0 rounded-4">
+      <div class="modal-body text-center p-5">
+        <div class="logout-icon-glow mb-3 mx-auto">
+          <i class="bi bi-box-arrow-right logout-icon-inner"></i>
         </div>
-        <div class="modal-body">
-          Are you sure you want to logout?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger" id="confirmLogout">Logout</button>
+        <h4 class="fw-semibold mb-2">Confirm Logout</h4>
+        <p class="text-muted">Are you sure you want to logout?</p>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger px-4 rounded-pill" id="confirmLogout">Logout</button>
         </div>
       </div>
     </div>
   </div>
+</div>
+
+
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
